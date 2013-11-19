@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-
+import json
 
 class Nagios:
     """
-
+    Nagios status.dat parser
     """
 
     def __init__(self, config):
@@ -16,13 +16,16 @@ class Nagios:
 
     def host(self, hostname):
         """
-
+        Return the users request hostname
         """
-        return self.hosts[hostname]
+        try:
+            return self.hosts[hostname]
+        except:
+            return False
 
     def all(self):
         """
-
+        Return all the hosts
         """
         return self.hosts
 
@@ -98,5 +101,5 @@ class Nagios:
 if __name__ == '__main__':
 
     n = Nagios('../status.dat')
-    #print n.host('ops-nbmedia1-1-sfm').keys()
-    print n.query('info').keys()
+    print json.dumps({'ops.nbmedia1-1-sfm': n.host('ops-nbmedia1-1-sfm')})
+    #print n.query('info').keys()

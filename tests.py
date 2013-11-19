@@ -5,13 +5,14 @@ import os
 
 class NagiosParseTest(unittest.TestCase):
     def setUp(self):
-        pass
+        self.valid = Nagios('tests/valid.dat')
+        self.invalid = Nagios('tests/invalid.dat')
 
     def test_ParseStatus(self):
         """
         Test to make sure Parsing does occur
         """
-        pass
+        
 
     def test_missingBrace(self):
         """
@@ -45,5 +46,5 @@ class NagiosParseTest(unittest.TestCase):
         """
         pass
 
-    def tearDown(self):
-        pass
+if __name__ == '__main__':
+    unittest.main()

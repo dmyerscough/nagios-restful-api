@@ -8,10 +8,9 @@ class Nagios:
     """
 
     def __init__(self, config):
-        self.nagios = ['hoststatus', 'servicestatus', 'servicecomment']
         self.config = config
-
         self.hosts = {}
+        self.misc = {}
 
         self._Parse()
 
@@ -26,6 +25,15 @@ class Nagios:
 
         """
         return self.hosts
+
+    def query(self, block):
+        """
+
+        """
+        try:
+            return self.misc[block]
+        except:
+            return False
 
     def _Parse(self):
         """
@@ -55,17 +63,17 @@ class Nagios:
                 continue
 
             if parse:
-                try:
-                    key, value = line.strip().split('=', 1)
-                except:
-                    import pdb;pdb.set_trace() 
+                key, value = line.strip().split('=', 1)
 
-                if key == 'host_name':
+                if key == 'host_name' or key == 'servicecomment':
                     hostname = value
                     continue
                 elif key == 'service_description':
-                    service = value
-                    continue
+                    if hostname:
+                        service = value
+                        continue
+                    else:
+                        raise Exception('service_description before host_name')
 
                 if hostname:
                     if service:
@@ -81,9 +89,14 @@ class Nagios:
                             self.hosts[hostname].update({key: value})
                         else:
                             self.hosts[hostname] = {key: value}
-
+                else:
+                    if self.misc.get(service_type, 0):
+                        self.misc[service_type].update({key: value})
+                    else:
+                        self.misc.update({service_type: {key: value}})
 
 if __name__ == '__main__':
 
     n = Nagios('../status.dat')
-    print n.host('ops-nbmedia1-1-sfm')
+    #print n.host('ops-nbmedia1-1-sfm').keys()
+    print n.query('info').keys()

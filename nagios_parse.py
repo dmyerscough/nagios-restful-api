@@ -80,18 +80,19 @@ class Nagios:
 
                 if hostname:
                     if service:
-                        if self.hosts[hostname].get(service_type, 0) and self.hosts[hostname][service_type].get(service, 0):
-                            self.hosts[hostname][service_type][service].update({key: value})
+                        if self.hosts[hostname][hostname].get(service_type, 0) and self.hosts[hostname][hostname][service_type].get(service, 0):
+                            self.hosts[hostname][hostname][service_type][service].update({key: value})
                         else:
-                            if self.hosts[hostname].get(service_type, 0):
-                                self.hosts[hostname][service_type].update({service: {key: value}})
+                            if self.hosts[hostname][hostname].get(service_type, 0):
+                                self.hosts[hostname][hostname][service_type].update({service: {key: value}})
                             else:
-                                self.hosts[hostname].update({service_type: {service: {key: value}}})
+                                self.hosts[hostname][hostname].update({service_type: {service: {key: value}}})
                     else:
                         if self.hosts.get(hostname, 0):
-                            self.hosts[hostname].update({key: value})
+                            self.hosts[hostname][hostname].update({key: value})
                         else:
-                            self.hosts[hostname] = {key: value}
+                            self.hosts[hostname] = {hostname: {}}
+                            self.hosts[hostname][hostname].update({key: value})
                 else:
                     if self.misc.get(service_type, 0):
                         self.misc[service_type].update({key: value})
@@ -101,5 +102,6 @@ class Nagios:
 if __name__ == '__main__':
 
     n = Nagios('../status.dat')
-    print json.dumps({'ops.nbmedia1-1-sfm': n.host('ops-nbmedia1-1-sfm')})
+    print json.dumps(n.host('ops-nbmedia1-1-sfm'))
+    #print json.dumps({'ops.nbmedia1-1-sfm': n.host('ops-nbmedia1-1-sfm')})
     #print n.query('info').keys()

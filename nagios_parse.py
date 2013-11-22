@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-import json
+__author__ = 'Damian Myerscough'
+
 
 class Nagios:
     """
@@ -16,26 +17,36 @@ class Nagios:
 
         self._Parse()
 
-    def host(self, hostname):
+    def host(self, hostname, json=False):
         """
-        Return the users request hostname
+        Return a single host that the user requested
+
+        :param hostname
+               The hostname that the user would like to query
+
+        :param json
+               Have the hosts have all the values return in a
+               json format
         """
-        return self.server[hostname]
+        if json:
+            return {hostname: self.hosts[hostname]}
+        else:
+            return self.server[hostname]
 
     def all(self):
         """
-        Return all the hosts
+        Return all the hosts in json format
         """
         return self.hosts
 
     def query(self, block):
         """
+        Allow the user to query other Nagios definitions
 
+        :param block
+               The Nagios block definition
         """
-        try:
-            return self.misc[block]
-        except:
-            return False
+        return self.misc[block]
 
     def _Parse(self):
         """
@@ -100,6 +111,7 @@ class Nagios:
                     else:
                         self.misc.update({service_type: {key: value}})
 
+
 class NagiosHost:
     """
     Nagios Host Systems
@@ -110,6 +122,6 @@ class NagiosHost:
 if __name__ == '__main__':
 
     n = Nagios('../status.dat')
-    print n.host('ops-nbmedia1-1-sfm').problem_has_been_acknowledged
-    #print json.dumps({'ops.nbmedia1-1-sfm': n.host('ops-nbmedia1-1-sfm')})
+    #print n.host('ops-nbmedia1-1-sfm').problem_has_been_acknowledged
+    print n.host('ops-nbmedia1-1-sfm', True)
     #print n.query('info').keys()

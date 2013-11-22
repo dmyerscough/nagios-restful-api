@@ -9,8 +9,10 @@ class Nagios:
 
     def __init__(self, config):
         self.config = config
-        self.hosts = {}
+        self.server = {}
         self.misc = {}
+
+        self.hosts = {}
 
         self._Parse()
 
@@ -18,10 +20,7 @@ class Nagios:
         """
         Return the users request hostname
         """
-        try:
-            return self.hosts[hostname]
-        except:
-            return False
+        return self.server[hostname]
 
     def all(self):
         """
@@ -61,6 +60,9 @@ class Nagios:
                 service_type = line.strip().split(' ')[0]
                 continue
             elif line.strip().endswith('}'):
+                if hostname:
+                    self.server[hostname] = NagiosHost(self.hosts[hostname])
+
                 hostname = service = None
                 parse = False
                 continue
@@ -80,28 +82,34 @@ class Nagios:
 
                 if hostname:
                     if service:
-                        if self.hosts[hostname][hostname].get(service_type, 0) and self.hosts[hostname][hostname][service_type].get(service, 0):
-                            self.hosts[hostname][hostname][service_type][service].update({key: value})
+                        if self.hosts[hostname].get(service_type, 0) and self.hosts[hostname][service_type].get(service, 0):
+                            self.hosts[hostname][service_type][service].update({key: value})
                         else:
-                            if self.hosts[hostname][hostname].get(service_type, 0):
-                                self.hosts[hostname][hostname][service_type].update({service: {key: value}})
+                            if self.hosts[hostname].get(service_type, 0):
+                                self.hosts[hostname][service_type].update({service: {key: value}})
                             else:
-                                self.hosts[hostname][hostname].update({service_type: {service: {key: value}}})
+                                self.hosts[hostname].update({service_type: {service: {key: value}}})
                     else:
                         if self.hosts.get(hostname, 0):
-                            self.hosts[hostname][hostname].update({key: value})
+                            self.hosts[hostname].update({key: value})
                         else:
-                            self.hosts[hostname] = {hostname: {}}
-                            self.hosts[hostname][hostname].update({key: value})
+                            self.hosts[hostname] = {key: value}
                 else:
                     if self.misc.get(service_type, 0):
                         self.misc[service_type].update({key: value})
                     else:
                         self.misc.update({service_type: {key: value}})
 
+class NagiosHost:
+    """
+    Nagios Host Systems
+    """
+    def __init__(self, obj):
+        self.__dict__.update(obj)
+
 if __name__ == '__main__':
 
     n = Nagios('../status.dat')
-    print json.dumps(n.host('ops-nbmedia1-1-sfm'))
+    print n.host('ops-nbmedia1-1-sfm').problem_has_been_acknowledged
     #print json.dumps({'ops.nbmedia1-1-sfm': n.host('ops-nbmedia1-1-sfm')})
     #print n.query('info').keys()

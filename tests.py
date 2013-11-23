@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 
+
 import unittest
 
 from NagiosParse import Nagios
 
+
 class NagiosParseTest(unittest.TestCase):
+
     def setUp(self):
         self.valid = Nagios('tests/valid.dat')
-
-    def test_ParseStatus(self):
-        """
-        Test to make sure Parsing does occur
-        """
         self.host_block = []
 
         fh = open('tests/host_options')
@@ -21,6 +19,10 @@ class NagiosParseTest(unittest.TestCase):
         # Append the servicestatus block definition since this holds service states
         self.host_block.append('servicestatus')
 
+    def test_ParseStatus(self):
+        """
+        Test to make sure Parsing does occur
+        """
         methods = [i for i in dir(self.valid.host('example.com')) if not i.startswith('__')]
 
         self.assertEqual(tuple(sorted(methods)), tuple(sorted(self.host_block)))
@@ -42,17 +44,21 @@ class NagiosParseTest(unittest.TestCase):
         Check to see if the query method return a valid response
         and try query garbage
         """
-        methods = ['update_available', 'new_version', 'created',  'last_update_check', 
+        methods = ['update_available', 'new_version', 'created',  'last_update_check',
                    'last_version', 'version']
 
-        self.assertEqual(tuple(sorted(methods)), tuple(sorted(self.valid.query('info')))) 
+        self.assertEqual(tuple(sorted(methods)), tuple(sorted(self.valid.query('info'))))
 
     def test_hostMethod(self):
         """
         Test to see if the correct host is return when queried
         and the response to non-existant hosts
         """
-        pass
+        service_keys = ['DISK_USR', 'DISK_VAR', 'DISK_HOME', 'DISK_BOOT']
+        methods = [i for i in dir(self.valid.host('example.com')) if not i.startswith('__')]
+
+        self.assertEqual(tuple(sorted(methods)), tuple(sorted(self.host_block)))
+        self.assertEqual(sorted(self.valid.host('example.com').servicestatus.keys()), sorted(service_keys))
 
     def test_allMethod(self):
         """

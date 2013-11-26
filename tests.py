@@ -9,7 +9,7 @@ from NagiosParse import Nagios
 class NagiosParseTest(unittest.TestCase):
 
     def setUp(self):
-        self.valid = Nagios('tests/valid.dat')
+        self.valid = Nagios('tests/valid.dat', 'nagios.cmd')
         self.host_block = []
 
         fh = open('tests/host_options')
@@ -64,7 +64,7 @@ class NagiosParseTest(unittest.TestCase):
         """
         Test to see if all hosts are returned
         """
-        pass
+        self.assertEquals(tuple(self.valid.all().keys()), ('example.com',))
 
 if __name__ == '__main__':
     unittest.main()

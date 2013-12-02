@@ -1,33 +1,68 @@
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import render
 from django.conf import settings
+from django.shortcuts import render
+from django.views.generic import View
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 from NagiosParse import Nagios
 
 
-def add_comment(request, hostname, comment, service_description=None, author='nagios-api', persistent=1):
-    inst = Nagios(settings.STATUS_FILE, settings.CMD_FILE)
+class Comments(View):
+    """
+    Manage Comments - Assign comments to Nagios host and service objects and remove comments
+                      from Nagios host and service objects
 
-    try:
-        inst.add_comment(hostname, comment, service_description, author, persistent)
-    except:
-        return HttpResponseBadRequest('Unable to write to the Nagios command file')
+    """
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(Comments, self).dispatch(*args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        """
+        Add a comment to a Nagios host or service object
+        """
+
+        OPTIONAL_FIELDS = {'service_description': None, 'author': 'nagios-api', 'persistent': 1}
+
+        for i, j in OPTIONAL_FIELDS.items():
+            if not kwargs.has_key(i):
+                kwargs.update({i: j})
+
+        inst = Nagios(settings.STATUS_FILE, settings.CMD_FILE)
+
+        try:
+            inst.add_comment(kwargs['hostname'], kwargs['comment'], kwargs['service_description'],
+                             kwargs['author'], kwargs['persistent'])
+        except:
+            return HttpResponseBadRequest('Unable to write to the Nagios command file')
  
-    return HttpResponse('{"STATUS": "Comment added successfully"}', content_type='application/json')
+        return HttpResponse('{"STATUS": "Comment added successfully"}', content_type='application/json')
 
-def remove_comment(request, comment_id, service=None):
-    inst = Nagios(settings.STATUS_FILE, settings.CMD_FILE)
 
-    try:
-        if service:
-            inst.remove_comment(comment_id, service=True)
-        else:
-            inst.remove_comment(comment_id)
+    def delete(self, request, *args, **kwargs):
+        """
+        Delete comments from Nagios objects
+        """
 
-    except:
-        return HttpResponseBadRequest('Unable to write to the Nagios command file')
+        OPTIONAL_FIELDS = {'service': False}
 
-    return HttpResponse('{"STATUS": "Comment removed successfully"}', content_type='application/json')
+        for i, j in OPTIONAL_FIELDS.items():
+            if not kwargs.has_key(i):
+                kwargs.update({i: j})
+
+        inst = Nagios(settings.STATUS_FILE, settings.CMD_FILE)
+
+        try:
+            if kwargs['service']:
+                inst.remove_comment(kwargs['comment_id'], service=True)
+            else:
+                inst.remove_comment(kwargs['comment_id'])
+        except:
+            return HttpResponseBadRequest('Unable to write to the Nagios command file')
+
+        return HttpResponse('{"STATUS": "Comment removed successfully"}', content_type='application/json')
 
 
 def problems(request):

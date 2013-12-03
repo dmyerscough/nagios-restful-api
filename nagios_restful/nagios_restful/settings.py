@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'nagios_api',
     'nagios_restful',
+    'rest_framework',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -58,6 +59,9 @@ ROOT_URLCONF = 'nagios_restful.urls'
 
 WSGI_APPLICATION = 'nagios_restful.wsgi.application'
 
+#REST_FRAMEWORK = {
+#    'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer')
+#}
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases

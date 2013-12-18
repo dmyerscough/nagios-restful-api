@@ -29,8 +29,8 @@ ALLOWED_HOSTS = []
 # Nagios status file and command pipe file to allow
 # actions to be performed against Nagios
 
-STATUS_FILE = '/home/dmyerscough/status.dat'
-CMD_FILE = '/home/dmyerscough/nagios.cmd'
+STATUS_FILE = '/Users/dmyerscough/Development/status.dat'
+CMD_FILE = '/Users/dmyerscough/Development/nagios.cmd'
 
 # Application definition
 

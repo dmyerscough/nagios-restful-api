@@ -17,7 +17,6 @@ class Comments(APIView):
 
     Assign comments to Nagios host and service objects and remove comments
     from Nagios host and service objects
-
     """
 
     def put(self, request, *args, **kwargs):
@@ -55,7 +54,7 @@ class Comments(APIView):
         inst = Nagios(settings.STATUS_FILE, settings.CMD_FILE)
 
         try:
-            if kwargs['service']:
+            if kwargs.get('service', 0):
                 inst.remove_comment(kwargs['comment_id'], service=True)
             else:
                 inst.remove_comment(kwargs['comment_id'])
@@ -65,10 +64,46 @@ class Comments(APIView):
         return Response('{"STATUS": "Comment removed successfully"}', status=status.HTTP_200_OK)
 
 
+class Notifications(APIView):
+    """
+    Manage Nagios Notifications
+    """
+
+    def put(self, request, *args, **kwargs):
+        """
+        Enable Notifications for either Hosts or host services
+        """
+        inst = Nagios(settings.STATUS_FILE, settings.CMD_FILE)
+
+        try:
+            if kwargs.get('service', 0):
+                inst.enable_notifications(kwargs['hostname'], kwargs['service'])
+            else:
+                inst.enable_notifications(kwargs['hostname'])
+        except:
+            return Response('{"STATUS", "Unable to write to the Nagios command file"}' status=status.HTTP_404_NOT_FOUND, content_type='application/json')
+
+        return Response('{"STATUS": "Notification enabled"}', status=status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+        """
+
+        """
+        inst = Nagios(settings.STATUS_FILE, settings.CMD_FILE)
+
+        try:
+            if kwargs.get('service', 0):
+                inst.disable_notifications(kwargs['hostname'], kwargs['service'])
+            else:
+                inst.disable_notifications(kwargs['hostname'])
+        except:
+            return Response('{"STATUS", "Unable to write to the Nagios command file"}' status=status.HTTP_404_NOT_FOUND, content_type='application/json')
+
+        return Response('{"STATUS": "Notification disabled"}', status=status.HTTP_200_OK)
+
 class Problems(APIView):
     """
     Display Service Problems
-
     """
 
     def get(self, request, *args, **kwargs):

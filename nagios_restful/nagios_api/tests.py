@@ -16,16 +16,21 @@ class NagiosParseTest(unittest.TestCase):
         for i in fh.readlines():
             self.host_block.append(i.strip())
 
-        # Append the servicestatus block definition since this holds service states
+        """
+        Append the servicestatus block definition since this
+        holds service states
+        """
         self.host_block.append('servicestatus')
 
     def test_ParseStatus(self):
         """
         Test to make sure Parsing does occur
         """
-        methods = [i for i in dir(self.valid.host('example.com')) if not i.startswith('__')]
+        methods = ([i for i in dir(self.valid.host('example.com'))
+                    if not i.startswith('__')])
 
-        self.assertEqual(tuple(sorted(methods)), tuple(sorted(self.host_block)))
+        self.assertEqual(tuple(sorted(methods)),
+                         tuple(sorted(self.host_block)))
 
     def test_missingBrace(self):
         """
@@ -44,10 +49,11 @@ class NagiosParseTest(unittest.TestCase):
         Check to see if the query method return a valid response
         and try query garbage
         """
-        methods = ['update_available', 'new_version', 'created',  'last_update_check',
-                   'last_version', 'version']
+        methods = ['update_available', 'new_version', 'created',
+                   'last_update_check', 'last_version', 'version']
 
-        self.assertEqual(tuple(sorted(methods)), tuple(sorted(self.valid.query('info'))))
+        self.assertEqual(tuple(sorted(methods)),
+                         tuple(sorted(self.valid.query('info'))))
 
     def test_hostMethod(self):
         """
@@ -55,10 +61,13 @@ class NagiosParseTest(unittest.TestCase):
         and the response to non-existant hosts
         """
         service_keys = ['DISK_USR', 'DISK_VAR', 'DISK_HOME', 'DISK_BOOT']
-        methods = [i for i in dir(self.valid.host('example.com')) if not i.startswith('__')]
+        methods = ([i for i in dir(self.valid.host('example.com'))
+                    if not i.startswith('__')])
 
-        self.assertEqual(tuple(sorted(methods)), tuple(sorted(self.host_block)))
-        self.assertEqual(sorted(self.valid.host('example.com').servicestatus.keys()), sorted(service_keys))
+        self.assertEqual(tuple(sorted(methods)),
+                         tuple(sorted(self.host_block)))
+        self.assertEqual(sorted(self.valid.host('example.com').
+                                servicestatus.keys()), sorted(service_keys))
 
     def test_allMethod(self):
         """

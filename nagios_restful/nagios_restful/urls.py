@@ -1,10 +1,11 @@
 from django.conf.urls import patterns, include, url
 
-from nagios_api.views import Comments, Problems, Notifications, ScheduleChecks, Downtime
+from nagios_api.views import Comments, Problems, Notifications, ScheduleChecks, Downtime, HostStatus
 
 
 urlpatterns = patterns('',
 
+    url('^host/(?P<hostname>[-a-zA-Z0-9\.]+)/$', HostStatus.as_view()),
     url('^problems/$', Problems.as_view()),
 
     #url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),

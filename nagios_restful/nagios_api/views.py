@@ -37,7 +37,8 @@ class Comments(APIView):
                             content_type='application/json')
 
         return Response('{"STATUS": "Comment added successfully"}',
-                        status=status.HTTP_200_OK)
+                        status=status.HTTP_200_OK,
+                        content_type='application/json')
 
     def delete(self, request, *args, **kwargs):
         """
@@ -55,7 +56,8 @@ class Comments(APIView):
                             content_type='application/json')
 
         return Response('{"STATUS": "Comment removed successfully"}',
-                        status=status.HTTP_200_OK)
+                        status=status.HTTP_200_OK,
+                        content_type='application/json')
 
 
 class Notifications(APIView):
@@ -79,7 +81,8 @@ class Notifications(APIView):
                             content_type='application/json')
 
         return Response('{"STATUS": "Notification enabled"}',
-                        status=status.HTTP_200_OK)
+                        status=status.HTTP_200_OK,
+                        content_type='application/json')
 
     def delete(self, request, *args, **kwargs):
         """
@@ -97,7 +100,8 @@ class Notifications(APIView):
                             content_type='application/json')
 
         return Response('{"STATUS": "Notification disabled"}',
-                        status=status.HTTP_200_OK)
+                        status=status.HTTP_200_OK,
+                        content_type='application/json')
 
 
 class ScheduleChecks(APIView):
@@ -121,7 +125,8 @@ class ScheduleChecks(APIView):
                             content_type='application/json')
 
         return Response('{"STATUS": "Check scheduled successfully"}',
-                        status=status.HTTP_200_OK)
+                        status=status.HTTP_200_OK,
+                        content_type='application/json')
 
 
 class Downtime(APIView):
@@ -148,7 +153,8 @@ class Downtime(APIView):
                             content_type='application/json')
 
         return Response('{"STATUS": "Downtime scheduled"}',
-                        status=status.HTTP_200_OK)
+                        status=status.HTTP_200_OK,
+                        content_type='application/json')
 
     def delete(self, request, *args, **kwargs):
         """
@@ -166,7 +172,8 @@ class Downtime(APIView):
                             content_type='application/json')
 
         return Response('{"STATUS": "Downtime cancelled"}',
-                        status=status.HTTP_200_OK)
+                        status=status.HTTP_200_OK,
+                        content_type='application/json')
 
 
 class Problems(APIView):
@@ -180,4 +187,27 @@ class Problems(APIView):
         """
         inst = Nagios(settings.STATUS_FILE, settings.CMD_FILE)
 
-        return Response(inst.service_problems(), status=status.HTTP_200_OK)
+        return Response(inst.service_problems(),
+                        status=status.HTTP_200_OK,
+                        content_type='application/json')
+
+
+class HostStatus(APIView):
+    """
+    Display overall host status
+    """
+
+    def get(self, request, *args, **kwargs):
+        """
+
+        """
+        inst = Nagios(settings.STATUS_FILE, settings.CMD_FILE)
+
+        try:
+            return Response(inst.host(kwargs['hostname']),
+                            status=status.HTTP_200_OK,
+                            content_type='application/json')
+        except KeyError:
+            return Response('{"STATUS": "Hostname does not exist"}',
+                            status=status.HTTP_200_OK,
+                            content_type='application/json')

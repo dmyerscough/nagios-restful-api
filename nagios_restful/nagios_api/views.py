@@ -199,12 +199,12 @@ class HostStatus(APIView):
 
     def get(self, request, *args, **kwargs):
         """
-
+        View the status of an individual host
         """
         inst = Nagios(settings.STATUS_FILE, settings.CMD_FILE)
 
         try:
-            return Response(inst.host(kwargs['hostname']),
+            return Response(inst.host(kwargs['hostname'], True),
                             status=status.HTTP_200_OK,
                             content_type='application/json')
         except KeyError:

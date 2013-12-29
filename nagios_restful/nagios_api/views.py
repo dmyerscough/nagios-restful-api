@@ -211,3 +211,19 @@ class HostStatus(APIView):
             return Response('{"STATUS": "Hostname does not exist"}',
                             status=status.HTTP_200_OK,
                             content_type='application/json')
+
+
+class AllHosts(APIView):
+    """
+    Dump All Hosts
+    """
+
+    def get(self, request, *args, **kwargs):
+        """
+        Display all hosts and all services
+        """
+        inst = Nagios(settings.STATUS_FILE, settings.CMD_FILE)
+
+        return Response(inst.all(True),
+                        status=status.HTTP_200_OK,
+                        content_type='application/json')

@@ -31,8 +31,8 @@ class Comments(APIView):
                              kwargs.get('author', 'nagios-api'),
                              kwargs.get('persistent', 1))
         except:
-            return Response('{"STATUS",
-                            "Unable to write to the Nagios command file"}',
+            return Response('''{"STATUS",
+                            "Unable to write to the Nagios command file"}''',
                             status=status.HTTP_404_NOT_FOUND,
                             content_type='application/json')
 
@@ -49,8 +49,8 @@ class Comments(APIView):
             inst.remove_comment(kwargs['comment_id'],
                                 kwargs.get('service', False))
         except:
-            return Response('{"STATUS",
-                            "Unable to write to the Nagios command file"}',
+            return Response('''{"STATUS",
+                            "Unable to write to the Nagios command file"}''',
                             status=status.HTTP_404_NOT_FOUND,
                             content_type='application/json')
 
@@ -73,8 +73,8 @@ class Notifications(APIView):
             inst.enable_notifications(kwargs['hostname'],
                                       kwargs.get('service', None))
         except:
-            return Response('{"STATUS",
-                            "Unable to write to the Nagios command file"}',
+            return Response('''{"STATUS",
+                            "Unable to write to the Nagios command file"}''',
                             status=status.HTTP_404_NOT_FOUND,
                             content_type='application/json')
 
@@ -91,8 +91,8 @@ class Notifications(APIView):
             inst.disable_notifications(kwargs['hostname'],
                                        kwargs.get('service', None))
         except:
-            return Response('{"STATUS",
-                            "Unable to write to the Nagios command file"}',
+            return Response('''{"STATUS",
+                            "Unable to write to the Nagios command file"}''',
                             status=status.HTTP_404_NOT_FOUND,
                             content_type='application/json')
 
@@ -115,8 +115,8 @@ class ScheduleChecks(APIView):
             inst.schedule_check(kwargs['hostname'], kwargs['time'],
                                 kwargs.get('service', None))
         except:
-            return Response('{"STATUS",
-                            "Unable to write to the Nagios command file"}',
+            return Response('''{"STATUS",
+                            "Unable to write to the Nagios command file"}''',
                             status=status.HTTP_404_NOT_FOUND,
                             content_type='application/json')
 
@@ -142,8 +142,8 @@ class Downtime(APIView):
                                    kwargs.get('service', None),
                                    kwargs.get('author', None))
         except:
-            return Response('{"STATUS",
-                            "Unable to write to the Nagios command file"}',
+            return Response('''{"STATUS",
+                            "Unable to write to the Nagios command file"}''',
                             status=status.HTTP_404_NOT_FOUND,
                             content_type='application/json')
 
@@ -160,8 +160,8 @@ class Downtime(APIView):
             inst.cancel_downtime(kwargs['hostname'], kwargs['downtime_id'],
                                  kwargs.get('service', None))
         except:
-            return Response('{"STATUS",
-                            "Unable to write to the Nagios command file"}',
+            return Response('''{"STATUS",
+                            "Unable to write to the Nagios command file"}''',
                             status=status.HTTP_404_NOT_FOUND,
                             content_type='application/json')
 
